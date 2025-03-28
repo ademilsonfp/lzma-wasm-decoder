@@ -37,23 +37,23 @@ size_t lzma_write(const ISeqOutStream *pp, const void *data, size_t size) {
 }
 
 emscripten::val lzma_decompress(emscripten::val buffer) {
-  std::string bufstr = buffer.as<std::string>();
-  std::vector<uint8_t> bufvec(bufstr.begin(), bufstr.end());
+  std::string buf_str = buffer.as<std::string>();
+  std::vector<uint8_t> buf_vec(buf_str.begin(), buf_str.end());
 
-  uint8_t *in_buffer = &bufvec[0];
+  uint8_t *in_buffer = &buf_vec[0];
 
-  uint64_t out_size = (
-    ((uint64_t) in_buffer[5]) |
-    (((uint64_t) in_buffer[6]) << 8) |
-    (((uint64_t) in_buffer[7]) << 16) |
-    (((uint64_t) in_buffer[8]) << 24) |
+  uint64_t size = (
+    ((uint32_t) in_buffer[5]) |
+    (((uint32_t) in_buffer[6]) << 8) |
+    (((uint32_t) in_buffer[7]) << 16) |
+    (((uint32_t) in_buffer[8]) << 24) |
     (((uint64_t) in_buffer[9]) << 32) |
     (((uint64_t) in_buffer[10]) << 40) |
     (((uint64_t) in_buffer[11]) << 48) |
     (((uint64_t) in_buffer[12]) << 56)
   );
 
-  uint8_t out_buffer[out_size];
+  uint8_t out_buffer[size];
 
   lzma_in_stream_t in_stream;
   in_stream.vt.Read = lzma_read;
